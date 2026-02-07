@@ -1,2 +1,29 @@
-.worktrees/
+# OS noise
+.DS_Store
+
+# IDE / editor state
+.claude/
+
+# Dev scratch
 .private-journal/
+inspo/
+triage/
+
+# Smoketest dirs
+.smoketest/
+.smoketest-*/
+
+# Per-project Super-Model state
+.super/cache/
+
+# Worktrees
+.worktrees/
+
+# Node
+node_modules/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
