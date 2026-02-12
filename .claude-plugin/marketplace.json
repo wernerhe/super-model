@@ -1,19 +1,19 @@
 {
-  "name": "superpowers-dev",
-  "description": "Development marketplace for Superpowers core skills library",
+  "name": "super-model-dev",
+  "description": "Development marketplace for the Super-Model skills library",
   "owner": {
-    "name": "Jesse Vincent",
-    "email": "jesse@fsck.com"
+    "name": "Harry Werner",
+    "email": "hwerner2014@gmail.com"
   },
   "plugins": [
     {
-      "name": "superpowers",
-      "description": "Core skills library for Claude Code: TDD, debugging, collaboration patterns, and proven techniques",
-      "version": "3.4.0",
+      "name": "super-model",
+      "description": "Per-project agentic skills library for Claude Code, Cursor, Windsurf, and other AI coding IDEs",
+      "version": "0.1.0",
       "source": "./",
       "author": {
-        "name": "Jesse Vincent",
-        "email": "jesse@fsck.com"
+        "name": "Harry Werner",
+        "email": "hwerner2014@gmail.com"
       }
     }
   ]
