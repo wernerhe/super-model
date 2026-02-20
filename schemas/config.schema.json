@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://super-model.local/schemas/config.schema.json",
+  "title": "SuperModelConfig",
+  "description": "Schema for ~/.super-model/config.json (global) and <project>/.super/config.json (per-project).",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "#/$defs/skillConfig"
+  },
+  "$defs": {
+    "skillConfig": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "preset": {
+          "type": "string",
+          "description": "Named preset to apply for this skill."
+        },
+        "backend": {
+          "type": "string",
+          "description": "For super-execute: which backend module to use."
+        },
+        "modules": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/moduleSettings"
+          },
+          "description": "Per-module overrides keyed by module name."
+        },
+        "policies": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/moduleSettings"
+          },
+          "description": "For super-execute: per-policy-module overrides keyed by policy name."
+        }
+      }
+    },
+    "moduleSettings": {
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "severity_override": {
+          "enum": ["critical", "important", "minor"]
+        },
+        "fix_policy_override": {
+          "enum": ["never", "suggest_only", "fix_with_risk_report", "fix_with_confirm"]
+        }
+      }
+    },
+    "manifest": {
+      "type": "object",
+      "required": ["skill", "modules"],
+      "additionalProperties": false,
+      "properties": {
+        "skill": {
+          "type": "string",
+          "description": "Top-level skill name (e.g., 'super-code-review')."
+        },
+        "modules": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {"type": "string"},
+              "enabled_by_default": {"type": "boolean", "default": true},
+              "order": {"type": "integer"}
+            }
+          }
+        },
+        "presets": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": true,
+            "properties": {
+              "modules_enabled": {
+                "type": "array",
+                "items": {"type": "string"}
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
