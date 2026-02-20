@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+### Added
+
+- 3 JSON Schema files at `schemas/`: `config.schema.json`, `module-frontmatter.schema.json`, `cache-marker.schema.json`.
+
 ### Changed
 
 - Forked from `obra/superpowers` v3.4.1; restructured around a per-project distribution model.

@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://super-model.local/schemas/cache-marker.schema.json",
+  "title": "CacheMarker",
+  "description": "Schema for entries in <project>/.super/cache/<purpose>-<key>.json",
+  "type": "object",
+  "required": ["purpose", "key", "timestamp", "hmac"],
+  "additionalProperties": false,
+  "properties": {
+    "purpose": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "What this cache marker is for (e.g., 'code-review')."
+    },
+    "key": {
+      "type": "string",
+      "description": "Invalidation key (typically a commit SHA)."
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO-8601 UTC time when the marker was written."
+    },
+    "ttl_seconds": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Optional time-to-live; if set, marker is stale after timestamp + ttl_seconds."
+    },
+    "data": {
+      "description": "Purpose-specific payload."
+    },
+    "hmac": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "Hex-encoded HMAC-SHA256 over canonical JSON of (purpose, key, data), signed with the per-user secret at ~/.super-model/cache-secret.bin. Tampered or hand-edited markers (HMAC mismatch) are treated as missing on read."
+    }
+  }
+}

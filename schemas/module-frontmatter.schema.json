@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://super-model.local/schemas/module-frontmatter.schema.json",
+  "title": "ModuleFrontmatter",
+  "description": "Schema for the YAML frontmatter of a Super-Model top-level skill module.",
+  "type": "object",
+  "required": ["name", "description"],
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9-]+$",
+      "description": "Module identifier; matches the file basename without extension."
+    },
+    "description": {
+      "type": "string",
+      "minLength": 10,
+      "description": "When to use this module / what it scans or does. Used by the GUI."
+    },
+    "severity_default": {
+      "enum": ["critical", "important", "minor"],
+      "description": "Default severity for findings produced by this module. Optional; for review-style modules."
+    },
+    "fix_policy": {
+      "enum": ["never", "suggest_only", "fix_with_risk_report", "fix_with_confirm"],
+      "description": "Whether and how this module applies fixes."
+    },
+    "dispatch": {
+      "enum": ["inline", "subagent"],
+      "default": "inline",
+      "description": "Where this module runs."
+    },
+    "agent": {
+      "type": "string",
+      "description": "If dispatch=subagent, which agent type to use."
+    },
+    "hooks_provided": {
+      "type": "array",
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+      "description": "Hook points this module provides (super-execute backends only)."
+    },
+    "hooks_consumed": {
+      "type": "object",
+      "additionalProperties": {"type": "string"},
+      "description": "Hook points this module attaches to (super-execute policy modules only). Maps hook name -> handler name."
+    },
+    "risk_assessment": {
+      "enum": ["required", "not-applicable"],
+      "default": "not-applicable",
+      "description": "Whether this module must produce per-fix risk metadata."
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "Other module names this module depends on."
+    },
+    "enabled_by_default": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether this module is enabled in the shipped default config."
+    }
+  },
+  "anyOf": [
+    {"not": {"properties": {"dispatch": {"const": "subagent"}}, "required": ["dispatch"]}},
+    {"required": ["agent"]}
+  ]
+}
