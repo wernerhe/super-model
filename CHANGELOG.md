@@ -7,9 +7,22 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+No changes yet.
+
+## [0.1.0] - 2026-03-06
+
+First tagged pre-release. Library foundation in place: atomic I/O, HMAC, cache markers, config cascade, module loader.
+
 ### Added
 
 - 3 JSON Schema files at `schemas/`: `config.schema.json`, `module-frontmatter.schema.json`, `cache-marker.schema.json`.
+- Python package `super_lib` at `scripts/super_lib/`:
+  - `_io.atomic_write_json` (FileLock + fsync + 0o600 on POSIX).
+  - `_hmac` (per-user secret at `~/.super-model/cache-secret.bin`).
+  - `cache.read_marker` / `write_marker` (HMAC-signed; conservative degradation on tamper).
+  - `config.resolve` (2-layer global + project cascade; fail-fast validation on load).
+  - `modules.read_manifest` / `list_modules` / `parse_frontmatter`.
+- `pyproject.toml` declares the package; `pip install -e .` works.
 
 ### Changed
 

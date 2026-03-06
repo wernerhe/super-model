@@ -1,0 +1,12 @@
+# Flat mirror of `pip install -e .[dev]` - same packages, same pins
+# as pyproject.toml so legacy pip / simple CI setups can do
+# `pip install -r requirements-dev.txt`.
+
+# Runtime deps (mirror of pyproject.toml [project.dependencies])
+jsonschema>=4.0
+pyyaml>=6.0
+filelock>=3.0
+
+# Dev-only deps (mirror of pyproject.toml [project.optional-dependencies] dev)
+pytest>=7.0
+ruff>=0.4
