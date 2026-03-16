@@ -7,7 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- Polyglot SessionStart hook: `hooks/run-hook.cmd` is the SAME file valid on Windows AND Unix.
+- Hardened `hooks/session-start` bash body: canonical-path verification, 32 KiB size cap, pure-bash JSON escaping, per-platform output safety.
 
 ## [0.1.0] - 2026-03-06
 
