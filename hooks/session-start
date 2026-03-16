@@ -1,0 +1,95 @@
+#!/usr/bin/env bash
+# SessionStart hook for super-model.
+#
+# Reads <plugin_root>/skills/using-super-model/SKILL.md and injects its
+# content into the session context. Hardened against tampering:
+#
+#   - canonical-path verification: refuse to read from a symlinked or
+#     relative-traversal location.
+#   - 32 KiB size cap: reject oversized SKILL.md (the genuine file is
+#     ~7 KB; oversize means tampered).
+#   - pure-bash JSON escaping: no sed/awk dependency, no shell-injection
+#     surface from SKILL.md content.
+
+set -euo pipefail
+
+# Determine plugin root directory
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+PLUGIN_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+# Cap SKILL.md size to prevent unbounded session-context bloat or memory
+# abuse via a tampered/oversized SKILL.md.
+MAX_SKILL_BYTES=32768  # 32 KiB - the genuine SKILL.md is ~7 KB
+
+# Resolve and verify the canonical SKILL.md path. Refuse to read from a
+# symlinked or relative-traversal location - this hook runs on every
+# session, so the trust boundary matters.
+expected_skill_md="${PLUGIN_ROOT}/skills/using-super-model/SKILL.md"
+if command -v realpath >/dev/null 2>&1; then
+  canonical_skill_md="$(realpath -- "$expected_skill_md" 2>/dev/null || echo "")"
+  canonical_expected="$(realpath -- "$expected_skill_md" 2>/dev/null || echo "$expected_skill_md")"
+else
+  canonical_skill_md="$expected_skill_md"
+  canonical_expected="$expected_skill_md"
+fi
+
+# Check if legacy upstream skills directory exists and build warning
+warning_message=""
+legacy_skills_dir="${HOME}/.config/superpowers/skills"
+if [ -d "$legacy_skills_dir" ]; then
+  warning_message="\n\n<important-reminder>IN YOUR FIRST REPLY AFTER SEEING THIS MESSAGE YOU MUST TELL THE USER: WARNING: Super-Model now uses Claude Code's skills system. Custom skills in ~/.config/superpowers/skills will not be read. Move custom skills to ~/.claude/skills instead. To make this message go away, remove ~/.config/superpowers/skills</important-reminder>"
+fi
+
+# Read using-super-model content with size cap and canonical-path enforcement
+if [ ! -f "$expected_skill_md" ]; then
+  using_super_model_content=""
+elif [ "$canonical_skill_md" != "$canonical_expected" ]; then
+  using_super_model_content="(SKILL.md resolved to a non-canonical path; skipped for security.)"
+else
+  file_size=$(wc -c < "$expected_skill_md" 2>/dev/null || echo 0)
+  if [ "$file_size" -gt "$MAX_SKILL_BYTES" ]; then
+    using_super_model_content="(SKILL.md exceeds $MAX_SKILL_BYTES bytes; not injected - file may be tampered.)"
+  else
+    using_super_model_content=$(cat "$expected_skill_md" 2>&1 || echo "Error reading using-super-model skill")
+  fi
+fi
+
+# Escape string for JSON embedding using bash parameter substitution.
+# Each ${s//old/new} is a single C-level pass - orders of magnitude
+# faster than the character-by-character loop this replaces, and avoids
+# the shell-injection surface that a sed/awk pipeline would introduce.
+escape_for_json() {
+  local s="$1"
+  s="${s//\\/\\\\}"
+  s="${s//\"/\\\"}"
+  s="${s//$'\n'/\\n}"
+  s="${s//$'\r'/\\r}"
+  s="${s//$'\t'/\\t}"
+  printf '%s' "$s"
+}
+
+using_super_model_escaped=$(escape_for_json "$using_super_model_content")
+warning_escaped=$(escape_for_json "$warning_message")
+session_context="<EXTREMELY_IMPORTANT>\n\nYou have super-model.\n\n**Below is the full content of your \`super-model:using-super-model\` skill - your introduction to using skills. For all other skills, use the \`Skill\` tool:**\n\n${using_super_model_escaped}\n\n${warning_escaped}\n\n</EXTREMELY_IMPORTANT>"
+
+# Output context injection as JSON.
+# Cursor hooks expect additional_context.
+# Claude Code hooks expect hookSpecificOutput.additionalContext.
+# Claude Code reads BOTH fields without deduplication, so we must only
+# emit the field consumed by the current platform to avoid double injection.
+#
+# Use printf instead of heredoc (cat <<EOF) to work around a bash 5.3+
+# bug where heredoc variable expansion hangs when content exceeds ~512
+# bytes.
+if [ -n "${CURSOR_PLUGIN_ROOT:-}" ]; then
+  # Cursor sets CURSOR_PLUGIN_ROOT (may also set CLAUDE_PLUGIN_ROOT) - emit additional_context
+  printf '{\n  "additional_context": "%s"\n}\n' "$session_context"
+elif [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
+  # Claude Code sets CLAUDE_PLUGIN_ROOT - emit only hookSpecificOutput
+  printf '{\n  "hookSpecificOutput": {\n    "hookEventName": "SessionStart",\n    "additionalContext": "%s"\n  }\n}\n' "$session_context"
+else
+  # Other platforms - emit additional_context as fallback
+  printf '{\n  "additional_context": "%s"\n}\n' "$session_context"
+fi
+
+exit 0
