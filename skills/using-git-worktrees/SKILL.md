@@ -40,17 +40,12 @@ grep -i "worktree.*director" CLAUDE.md 2>/dev/null
 If no directory exists and no CLAUDE.md preference:
 
 ```
-No worktree directory found. Where should I create worktrees?
-
-1. .worktrees/ (project-local, hidden)
-2. ~/.config/superpowers/worktrees/<project-name>/ (global location)
-
-Which would you prefer?
+No worktree directory found. Should I create `.worktrees/` (project-local, hidden) and add it to .gitignore?
 ```
 
-## Safety Verification
+Super-Model is per-project by design - keep worktrees inside the project too. If you want a different layout, use `git worktree add` directly without skill assistance.
 
-### For Project-Local Directories (.worktrees or worktrees)
+## Safety Verification
 
 **MUST verify .gitignore before creating worktree:**
 
@@ -59,18 +54,13 @@ Which would you prefer?
 grep -q "^\.worktrees/$" .gitignore || grep -q "^worktrees/$" .gitignore
 ```
 
-**If NOT in .gitignore:**
+**If NOT in .gitignore:** apply the Boy Scout rule - fix it now, not later:
 
-Per Jesse's rule "Fix broken things immediately":
-1. Add appropriate line to .gitignore
+1. Add `.worktrees/` to .gitignore
 2. Commit the change
 3. Proceed with worktree creation
 
-**Why critical:** Prevents accidentally committing worktree contents to repository.
-
-### For Global Directory (~/.config/superpowers/worktrees)
-
-No .gitignore verification needed - outside project entirely.
+**Why critical:** Prevents accidentally committing worktree contents to the repository.
 
 ## Creation Steps
 
@@ -83,15 +73,8 @@ project=$(basename "$(git rev-parse --show-toplevel)")
 ### 2. Create Worktree
 
 ```bash
-# Determine full path
-case $LOCATION in
-  .worktrees|worktrees)
-    path="$LOCATION/$BRANCH_NAME"
-    ;;
-  ~/.config/superpowers/worktrees/*)
-    path="~/.config/superpowers/worktrees/$project/$BRANCH_NAME"
-    ;;
-esac
+# Project-local path
+path=".worktrees/$BRANCH_NAME"
 
 # Create worktree with new branch
 git worktree add "$path" -b "$BRANCH_NAME"
