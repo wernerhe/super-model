@@ -111,7 +111,7 @@ You MUST complete each phase before proceeding to the next.
 
    **WHEN error is deep in call stack:**
 
-   **REQUIRED SUB-SKILL:** Use superpowers:root-cause-tracing for backward tracing technique
+   **Root-cause tracing pattern:** trace backwards from the failing observation, asking "where does this bad value originate?" Repeat one hop at a time until you find the source. Don't stop at the proximate symptom.
 
    **Quick version:**
    - Where does bad value originate?
@@ -176,7 +176,7 @@ You MUST complete each phase before proceeding to the next.
    - Automated test if possible
    - One-off test script if no framework
    - MUST have before fixing
-   - **REQUIRED SUB-SKILL:** Use superpowers:test-driven-development for writing proper failing tests
+   - **REQUIRED SUB-SKILL:** Use super-model:test-driven-development for writing proper failing tests
 
 2. **Implement Single Fix**
    - Address the root cause identified
