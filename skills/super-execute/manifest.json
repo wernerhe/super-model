@@ -1,0 +1,24 @@
+{
+  "skill": "super-execute",
+  "modules": [
+    {"name": "plan-load",                       "enabled_by_default": true,  "order": 1},
+    {"name": "execute-implementation-plan",     "enabled_by_default": true,  "order": 2},
+    {"name": "backend-subagent-driven",         "enabled_by_default": false, "order": 3},
+    {"name": "backend-inline-batch",            "enabled_by_default": true,  "order": 4},
+    {"name": "backend-parallel-dispatch",       "enabled_by_default": false, "order": 5},
+    {"name": "policy-tdd-enforcement",          "enabled_by_default": true,  "order": 6},
+    {"name": "policy-code-review-checkpoints",  "enabled_by_default": true,  "order": 7},
+    {"name": "policy-design-fidelity",          "enabled_by_default": true,  "order": 8}
+  ],
+  "presets": {
+    "default": {
+      "modules_enabled": ["plan-load", "execute-implementation-plan", "backend-inline-batch", "policy-tdd-enforcement", "policy-code-review-checkpoints", "policy-design-fidelity"]
+    },
+    "subagent": {
+      "modules_enabled": ["plan-load", "execute-implementation-plan", "backend-subagent-driven", "policy-tdd-enforcement", "policy-code-review-checkpoints", "policy-design-fidelity"]
+    },
+    "parallel": {
+      "modules_enabled": ["plan-load", "execute-implementation-plan", "backend-parallel-dispatch", "policy-code-review-checkpoints"]
+    }
+  }
+}

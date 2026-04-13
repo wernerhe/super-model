@@ -1,0 +1,22 @@
+{
+  "skill": "super-code-review",
+  "modules": [
+    {"name": "file-references",        "enabled_by_default": true, "order": 1},
+    {"name": "namespace-consistency",  "enabled_by_default": true, "order": 2},
+    {"name": "dead-code",              "enabled_by_default": true, "order": 3},
+    {"name": "test-coverage",          "enabled_by_default": true, "order": 4},
+    {"name": "security-scan",          "enabled_by_default": true, "order": 5},
+    {"name": "dependency-health",      "enabled_by_default": true, "order": 6},
+    {"name": "doc-drift",              "enabled_by_default": true, "order": 7},
+    {"name": "performance-hotspots",   "enabled_by_default": true, "order": 8},
+    {"name": "complexity",             "enabled_by_default": true, "order": 9}
+  ],
+  "presets": {
+    "default": {
+      "modules_enabled": ["file-references", "namespace-consistency", "dead-code", "test-coverage", "security-scan", "dependency-health", "doc-drift", "performance-hotspots", "complexity"]
+    },
+    "fast": {
+      "modules_enabled": ["file-references", "namespace-consistency", "test-coverage", "security-scan"]
+    }
+  }
+}

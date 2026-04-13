@@ -1,0 +1,14 @@
+{
+  "skill": "super-prepare-branch",
+  "modules": [
+    {"name": "review-cache-check", "enabled_by_default": true, "order": 1},
+    {"name": "commit-hygiene",     "enabled_by_default": true, "order": 2},
+    {"name": "rebase-preview",     "enabled_by_default": true, "order": 3},
+    {"name": "push-readiness",     "enabled_by_default": true, "order": 4}
+  ],
+  "presets": {
+    "default": {
+      "modules_enabled": ["review-cache-check", "commit-hygiene", "rebase-preview", "push-readiness"]
+    }
+  }
+}

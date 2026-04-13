@@ -7,12 +7,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+No changes yet.
+
+## [0.2.0] - 2026-04-12
+
+Skills catalog complete. All 8 top-level skills present with manifests + modules; 7 helper / always-on skills support them.
+
 ### Added
 
 - Polyglot SessionStart hook: `hooks/run-hook.cmd` is the SAME file valid on Windows AND Unix.
 - Hardened `hooks/session-start` bash body: canonical-path verification, 32 KiB size cap, pure-bash JSON escaping, per-platform output safety.
 - 7 helper / always-on skills: `using-super-model`, `writing-skills`, `test-driven-development`, `systematic-debugging`, `receiving-code-review`, `using-git-worktrees`, `verification-before-completion`.
 - `using-super-model` as the always-on policy skill, auto-injected by the SessionStart hook.
+- 8 top-level `super-*` skills:
+  - `super-brainstorm` (14 modules; 3 hard approval gates: verbal design, written design, written spec; presets: full / fast / spec-only).
+  - `super-code-review` (9 modules; HMAC-signed cache marker output).
+  - `super-prepare-branch` (4 modules; reads the code-review cache marker; chain-fires review on miss).
+  - `super-delete-branch` (4 modules; value-check before any `git branch -D`).
+  - `super-model-setup` (8 install modules; backs the install script).
+  - `super-visual-debug` (6 modules; capability memory between iterations).
+  - `super-mcp-builder` (4 modules; no MCP source ever vendored).
+  - `super-execute` (8 modules; hook-point composition of 3 backends + 3 policies; chain-fired only from `super-brainstorm`).
+- 57 modules total across the 8 top-level skills.
 
 ## [0.1.0] - 2026-03-06
 
