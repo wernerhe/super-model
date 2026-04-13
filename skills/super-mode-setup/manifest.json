@@ -1,0 +1,27 @@
+{
+  "skill": "super-mode-setup",
+  "modules": [
+    {"name": "claude-md-init",         "enabled_by_default": true, "order": 1},
+    {"name": "super-config-init",      "enabled_by_default": true, "order": 2},
+    {"name": "gitignore-update",       "enabled_by_default": true, "order": 3},
+    {"name": "project-type-detection", "enabled_by_default": true, "order": 4},
+    {"name": "mcp-wiring",             "enabled_by_default": true, "order": 5},
+    {"name": "hooks-install",          "enabled_by_default": true, "order": 6},
+    {"name": "permissions-install",    "enabled_by_default": true, "order": 7},
+    {"name": "slash-commands-install", "enabled_by_default": true, "order": 8}
+  ],
+  "presets": {
+    "default": {
+      "modules_enabled": [
+        "claude-md-init",
+        "super-config-init",
+        "gitignore-update",
+        "project-type-detection",
+        "mcp-wiring",
+        "hooks-install",
+        "permissions-install",
+        "slash-commands-install"
+      ]
+    }
+  }
+}

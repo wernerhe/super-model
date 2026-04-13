@@ -1,0 +1,30 @@
+{
+  "skill": "super-brainstorm",
+  "modules": [
+    {"name": "approach-profile",           "enabled_by_default": true,  "order": 1},
+    {"name": "clarifying-questions",       "enabled_by_default": true,  "order": 2},
+    {"name": "mcp-tool-config",            "enabled_by_default": false, "order": 3},
+    {"name": "autonomous-mode-config",     "enabled_by_default": false, "order": 4},
+    {"name": "design-presentation",        "enabled_by_default": true,  "order": 5},
+    {"name": "write-design-doc",           "enabled_by_default": true,  "order": 6},
+    {"name": "audit-evaluation",           "enabled_by_default": true,  "order": 7},
+    {"name": "implementation-plan-review", "enabled_by_default": true,  "order": 8},
+    {"name": "user-approves-design",       "enabled_by_default": true,  "order": 9},
+    {"name": "write-spec-doc",             "enabled_by_default": true,  "order": 10},
+    {"name": "spec-review",                "enabled_by_default": true,  "order": 11},
+    {"name": "user-approves-spec",         "enabled_by_default": true,  "order": 12},
+    {"name": "write-implementation-plan",  "enabled_by_default": true,  "order": 13},
+    {"name": "execute-implementation-plan","enabled_by_default": true,  "order": 14}
+  ],
+  "presets": {
+    "full": {
+      "modules_enabled": ["approach-profile", "clarifying-questions", "mcp-tool-config", "autonomous-mode-config", "design-presentation", "write-design-doc", "audit-evaluation", "implementation-plan-review", "user-approves-design", "write-spec-doc", "spec-review", "user-approves-spec", "write-implementation-plan", "execute-implementation-plan"]
+    },
+    "fast": {
+      "modules_enabled": ["approach-profile", "clarifying-questions", "design-presentation", "write-design-doc", "user-approves-design", "write-spec-doc", "user-approves-spec", "write-implementation-plan", "execute-implementation-plan"]
+    },
+    "spec-only": {
+      "modules_enabled": ["approach-profile", "clarifying-questions", "write-spec-doc", "spec-review", "user-approves-spec", "write-implementation-plan", "execute-implementation-plan"]
+    }
+  }
+}

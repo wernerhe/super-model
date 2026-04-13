@@ -1,0 +1,14 @@
+{
+  "skill": "super-mcp-builder",
+  "modules": [
+    {"name": "discover-mcps",    "enabled_by_default": true, "order": 1},
+    {"name": "install-upstream", "enabled_by_default": true, "order": 2},
+    {"name": "alter-config",     "enabled_by_default": true, "order": 3},
+    {"name": "build-new",        "enabled_by_default": true, "order": 4}
+  ],
+  "presets": {
+    "default": {
+      "modules_enabled": ["discover-mcps", "install-upstream", "alter-config", "build-new"]
+    }
+  }
+}
