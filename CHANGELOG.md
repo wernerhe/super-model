@@ -7,7 +7,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- 7 `super-*` slash command shims in `commands/` (no `/super-execute` shim - chain-fired only from `/super-brainstorm`).
 
 ## [0.2.0] - 2026-04-12
 
