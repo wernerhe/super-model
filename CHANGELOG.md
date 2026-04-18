@@ -7,9 +7,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+No changes yet.
+
+## [0.3.0] - 2026-04-18
+
+First installable build. Any project can run `python super-model-setup.py <project>` and get a fully wired install.
+
 ### Added
 
 - 7 `super-*` slash command shims in `commands/` (no `/super-execute` shim - chain-fired only from `/super-brainstorm`).
+- `super-model-setup.py` install script (Python 3.11+ enforced; 3.6-compatible parse for the version guard).
+- `super-model-setup.bat` and `super-model-setup.sh` wrappers for one-command install on Windows / POSIX.
+
+### Changed
+
+- Slash command shims also installed to `.windsurf/workflows/` and `.clinerules/workflows/` for Windsurf + Cline parity.
 
 ## [0.2.0] - 2026-04-12
 
