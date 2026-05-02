@@ -7,7 +7,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- 17-file foundation test suite at `tests/foundation/` (104 assertions; all pass on the supported matrix).
+- `requirements-dev.txt` declaring pytest + filelock.
+- `tests/foundation/conftest.py` with reusable `super_root` / `tmp_project` / `tmp_global_home` fixtures.
+
+### Security
+
+- Tests cover cache filename sanitization (null bytes, NTFS Alternate Data Streams, Windows reserved device names, path separators, Unicode look-alikes, oversized names, dotfiles).
+- Tests cover atomic-write discipline (FileLock + fsync + 0o600 on POSIX).
+- Tests cover HMAC-signed cache markers (forged markers read as `None`).
 
 ## [0.3.0] - 2026-04-18
 
