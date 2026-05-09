@@ -7,11 +7,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+No changes yet.
+
+## [0.4.0] - 2026-05-09
+
+Documented + tested. Anyone scanning the repo can understand what it does and verify it works on their machine.
+
 ### Added
 
 - 17-file foundation test suite at `tests/foundation/` (104 assertions; all pass on the supported matrix).
 - `requirements-dev.txt` declaring pytest + filelock.
 - `tests/foundation/conftest.py` with reusable `super_root` / `tmp_project` / `tmp_global_home` fixtures.
+- README.md with quickstart, what-it-is, directory layout, distribution model rationale, and security model summary.
+- 5 architecture deep dives in `docs/architecture/`:
+  - `config-cascade.md` - 2-layer global + project cascade with fail-fast validation.
+  - `hook-points.md` - SessionStart + slash command shim semantics.
+  - `cache-markers.md` - HMAC-signed verdict markers + conservative-degradation model.
+  - `idempotency-model.md` - install / re-install / drift detection.
+  - `super-execute-backends.md` - hook-point composition of 3 backends x 3 policies.
+- `CONTRIBUTING.md`, `SECURITY.md`, `CODE_OF_CONDUCT.md` (governance baseline).
 
 ### Security
 
