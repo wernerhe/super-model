@@ -7,7 +7,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
-No changes yet.
+### Added
+
+- 2 agent definitions in `agents/` for `super-execute` subagent dispatch:
+  - `code-implementer` (per-step implementation under SUBAGENT-STOP exemption; TDD-first; no scope creep).
+  - `code-reviewer` (focused-scope review agent).
+
+### Fixed
+
+- `code-reviewer` frontmatter description rewritten to be YAML-safe (upstream description had embedded `<example>Context:` colon-space sequences that broke `yaml.safe_load`).
 
 ## [0.4.0] - 2026-05-09
 
