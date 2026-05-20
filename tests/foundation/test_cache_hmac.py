@@ -5,6 +5,7 @@ return None. Callers should never see a tampered marker as valid -
 that would silently corrupt downstream decisions (e.g., skipping a
 real code review because the marker says READY-TO-MERGE).
 """
+
 from __future__ import annotations
 
 import json
@@ -20,21 +21,17 @@ from scripts.super_lib.cache import read_marker, write_marker
 
 def _find_marker_file(project_root: Path, purpose: str, key: str) -> Path:
     cache_dir = project_root / ".super" / "cache"
-    files = list(cache_dir.glob("{}-{}*.json".format(purpose, key)))
+    files = list(cache_dir.glob(f"{purpose}-{key}*.json"))
     assert files, "marker not found on disk"
     return files[0]
 
 
-def test_round_trip_hmac_matches(
-    tmp_project: Path, tmp_global_home: Path
-) -> None:
+def test_round_trip_hmac_matches(tmp_project: Path, tmp_global_home: Path) -> None:
     write_marker(tmp_project, "code-review", "k1", {"verdict": "ok"})
     assert read_marker(tmp_project, "code-review", "k1") is not None
 
 
-def test_tampered_data_field_returns_none(
-    tmp_project: Path, tmp_global_home: Path
-) -> None:
+def test_tampered_data_field_returns_none(tmp_project: Path, tmp_global_home: Path) -> None:
     write_marker(tmp_project, "code-review", "k2", {"verdict": "ok"})
     marker_path = _find_marker_file(tmp_project, "code-review", "k2")
     raw = json.loads(marker_path.read_text(encoding="utf-8"))
@@ -46,9 +43,7 @@ def test_tampered_data_field_returns_none(
     assert read_marker(tmp_project, "code-review", "k2") is None
 
 
-def test_tampered_hmac_field_returns_none(
-    tmp_project: Path, tmp_global_home: Path
-) -> None:
+def test_tampered_hmac_field_returns_none(tmp_project: Path, tmp_global_home: Path) -> None:
     write_marker(tmp_project, "code-review", "k3", {"verdict": "ok"})
     marker_path = _find_marker_file(tmp_project, "code-review", "k3")
     raw = json.loads(marker_path.read_text(encoding="utf-8"))
@@ -94,9 +89,7 @@ def test_cross_user_hmac_isolation(
 
 
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX-only chmod")
-def test_secret_file_permissions(
-    tmp_project: Path, tmp_global_home: Path
-) -> None:
+def test_secret_file_permissions(tmp_project: Path, tmp_global_home: Path) -> None:
     """The per-user secret file must be 0600 on POSIX so other accounts
     on the same machine cannot read it and forge markers."""
     # Trigger secret creation.
@@ -104,4 +97,4 @@ def test_secret_file_permissions(
     secret = tmp_global_home / ".super-model" / "cache-secret.bin"
     if secret.exists():
         mode = os.stat(secret).st_mode & 0o777
-        assert mode == 0o600, "expected 0600 on secret, got {:o}".format(mode)
+        assert mode == 0o600, f"expected 0600 on secret, got {mode:o}"

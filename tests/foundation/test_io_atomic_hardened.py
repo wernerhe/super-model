@@ -8,6 +8,7 @@ The contract:
 - A torn write cannot be observed at the final path - the temp file
   sits with a `.json.tmp.*` suffix until `os.replace()` commits.
 """
+
 from __future__ import annotations
 
 import os
@@ -26,6 +27,7 @@ def test_round_trip(tmp_path: Path) -> None:
     atomic_write_json(target, {"key": "value", "n": 7})
     assert target.exists()
     import json
+
     assert json.loads(target.read_text()) == {"key": "value", "n": 7}
 
 
@@ -42,16 +44,16 @@ def test_concurrent_writers_serialize(tmp_path: Path) -> None:
             errors.append(exc)
 
     threads = [
-        threading.Thread(target=writer, args=({"writer": i, "value": i * 10},))
-        for i in range(8)
+        threading.Thread(target=writer, args=({"writer": i, "value": i * 10},)) for i in range(8)
     ]
     for t in threads:
         t.start()
     for t in threads:
         t.join()
 
-    assert not errors, "concurrent writers raised: {}".format(errors)
+    assert not errors, f"concurrent writers raised: {errors}"
     import json
+
     parsed = json.loads(target.read_text())
     assert "writer" in parsed
     assert 0 <= parsed["writer"] <= 7
@@ -62,7 +64,7 @@ def test_posix_mode_is_0600(tmp_path: Path) -> None:
     target = tmp_path / "secret.json"
     atomic_write_json(target, {"sensitive": True})
     mode = os.stat(target).st_mode & 0o777
-    assert mode == 0o600, "expected 0600, got {:o}".format(mode)
+    assert mode == 0o600, f"expected 0600, got {mode:o}"
 
 
 def test_fsync_is_called(tmp_path: Path) -> None:
@@ -79,4 +81,4 @@ def test_no_tmp_file_left_behind(tmp_path: Path) -> None:
     target = tmp_path / "clean.json"
     atomic_write_json(target, {"clean": True})
     siblings = list(tmp_path.glob("clean.json.tmp.*"))
-    assert siblings == [], "unexpected temp siblings: {}".format(siblings)
+    assert siblings == [], f"unexpected temp siblings: {siblings}"

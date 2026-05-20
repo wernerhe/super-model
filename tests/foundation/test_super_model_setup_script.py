@@ -5,6 +5,7 @@ re-run idempotency, drift detection, and CLAUDE.md / config / gitignore
 preservation. The script is invoked via subprocess so we test what
 users actually experience (not the importable surface).
 """
+
 from __future__ import annotations
 
 import importlib.util
@@ -36,9 +37,10 @@ def _run_setup(target: Path, env_overrides: dict | None = None) -> subprocess.Co
 # First-install behaviors
 # ---------------------------------------------------------------------------
 
+
 def test_first_install_creates_expected_artifacts(tmp_path: Path) -> None:
     result = _run_setup(tmp_path)
-    assert result.returncode == 0, "stderr: {}".format(result.stderr)
+    assert result.returncode == 0, f"stderr: {result.stderr}"
 
     assert (tmp_path / "CLAUDE.md").exists()
     assert (tmp_path / ".super" / "config.json").exists()
@@ -55,7 +57,7 @@ def test_first_install_writes_seven_slash_commands_per_ide(tmp_path: Path) -> No
         tmp_path / ".clinerules" / "workflows",
     ]:
         files = list(ide_dir.glob("super-*.md"))
-        assert len(files) == 7, "expected 7 files in {}, got {}".format(ide_dir, len(files))
+        assert len(files) == 7, f"expected 7 files in {ide_dir}, got {len(files)}"
 
 
 def test_first_install_writes_always_on_rule_per_ide(tmp_path: Path) -> None:
@@ -68,21 +70,27 @@ def test_first_install_writes_always_on_rule_per_ide(tmp_path: Path) -> None:
 # Idempotency
 # ---------------------------------------------------------------------------
 
+
 def test_rerun_is_idempotent(tmp_path: Path) -> None:
     _run_setup(tmp_path)
-    # Snapshot file modification times.
-    before = {p: p.stat().st_mtime for p in tmp_path.rglob("*") if p.is_file()}
-    # Re-run.
+    # Re-run: every module should report "already present" / similar -
+    # the install is fully idempotent.
     result = _run_setup(tmp_path)
     assert result.returncode == 0
     # Files that did NOT change should preserve mtime; the script reports
     # "already present" for each module on re-run.
-    assert "already present" in result.stdout or "already configured" in result.stdout or "no changes" in result.stdout.lower() or "already installed" in result.stdout
+    assert (
+        "already present" in result.stdout
+        or "already configured" in result.stdout
+        or "no changes" in result.stdout.lower()
+        or "already installed" in result.stdout
+    )
 
 
 # ---------------------------------------------------------------------------
 # Preservation guarantees
 # ---------------------------------------------------------------------------
+
 
 def test_existing_claude_md_preserved(tmp_path: Path) -> None:
     """Pre-existing CLAUDE.md with user content must NOT be clobbered.
@@ -125,6 +133,7 @@ def test_gitignore_dedups(tmp_path: Path) -> None:
 # Drift detection
 # ---------------------------------------------------------------------------
 
+
 def test_user_edited_slash_command_preserved(tmp_path: Path) -> None:
     """If the user edits the BODY of a slash command shim, re-running
     setup must NOT clobber the user's edit. The drift-detection heuristic
@@ -148,6 +157,7 @@ def test_user_edited_slash_command_preserved(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 # Drive-root refusal
 # ---------------------------------------------------------------------------
+
 
 @pytest.mark.skipif(sys.platform == "win32", reason="POSIX root test")
 def test_drive_root_refusal_posix() -> None:
@@ -177,6 +187,7 @@ def test_drive_root_refusal_windows() -> None:
 # ---------------------------------------------------------------------------
 # settings.json merge semantics
 # ---------------------------------------------------------------------------
+
 
 def test_settings_json_merge_preserves_existing_hooks(tmp_path: Path) -> None:
     """Pre-existing hooks must not be removed when we add ours."""
@@ -209,6 +220,7 @@ def test_settings_json_merge_preserves_existing_hooks(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 # Output format
 # ---------------------------------------------------------------------------
+
 
 def test_output_includes_source_and_target_paths(tmp_path: Path) -> None:
     """Summary output starts with source: and target: lines so users can

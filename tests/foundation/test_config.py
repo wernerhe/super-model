@@ -4,6 +4,7 @@ Covers `config.resolve` cascade ordering (global then project; project
 wins), `config._deep_merge` semantics, `config.validate` accept/reject
 shapes, and the `write_project_config` round-trip.
 """
+
 from __future__ import annotations
 
 import json

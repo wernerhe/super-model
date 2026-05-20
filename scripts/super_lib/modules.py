@@ -3,6 +3,7 @@
 Used by the foundation tests (one per top-level skill) and by any skill
 that wants to enumerate its own module list.
 """
+
 from __future__ import annotations
 
 import json
@@ -24,13 +25,10 @@ def read_manifest(skill_dir: Path) -> dict[str, Any]:
     try:
         parsed = json.loads(manifest_path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
-        raise ValueError(
-            f"manifest.json at {manifest_path} is malformed JSON: {e}"
-        ) from e
+        raise ValueError(f"manifest.json at {manifest_path} is malformed JSON: {e}") from e
     if not isinstance(parsed, dict):
         raise ValueError(
-            f"manifest.json at {manifest_path} must be a JSON object, "
-            f"got {type(parsed).__name__}"
+            f"manifest.json at {manifest_path} must be a JSON object, got {type(parsed).__name__}"
         )
     return parsed
 
@@ -46,21 +44,16 @@ def list_modules(skill_dir: Path) -> list[str]:
     entries = manifest.get("modules", [])
     if not isinstance(entries, list):
         raise ValueError(
-            f"manifest.modules at {skill_dir} must be a list, "
-            f"got {type(entries).__name__}"
+            f"manifest.modules at {skill_dir} must be a list, got {type(entries).__name__}"
         )
     collected: list[tuple[int | None, str]] = []
     all_have_order = True
     for idx, entry in enumerate(entries):
         if not isinstance(entry, dict):
-            raise ValueError(
-                f"manifest.modules[{idx}] at {skill_dir} must be an object"
-            )
+            raise ValueError(f"manifest.modules[{idx}] at {skill_dir} must be an object")
         name = entry.get("name")
         if not isinstance(name, str):
-            raise ValueError(
-                f"manifest.modules[{idx}] at {skill_dir} missing required 'name'"
-            )
+            raise ValueError(f"manifest.modules[{idx}] at {skill_dir} missing required 'name'")
         order = entry.get("order")
         if not isinstance(order, int):
             all_have_order = False
@@ -89,15 +82,11 @@ def parse_frontmatter(module_file: Path, validate: bool = True) -> dict[str, Any
     text = module_file.read_text(encoding="utf-8")
     parts = text.split("---", 2)
     if len(parts) < 3:
-        raise ValueError(
-            f"No frontmatter delimiters (---) found in {module_file}"
-        )
+        raise ValueError(f"No frontmatter delimiters (---) found in {module_file}")
     try:
         parsed = yaml.safe_load(parts[1])
     except yaml.YAMLError as e:
-        raise ValueError(
-            f"Invalid YAML frontmatter in {module_file}: {e}"
-        ) from e
+        raise ValueError(f"Invalid YAML frontmatter in {module_file}: {e}") from e
     if parsed is None:
         return {}
     if not isinstance(parsed, dict):
@@ -107,5 +96,6 @@ def parse_frontmatter(module_file: Path, validate: bool = True) -> dict[str, Any
         )
     if validate:
         from .config import validate_module
+
         validate_module(parsed)
     return parsed

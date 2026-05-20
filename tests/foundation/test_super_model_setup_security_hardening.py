@@ -6,6 +6,7 @@ $defaults sentinel preserved at index 0. The edge cases exercised
 here are the ones most likely to bite when a user has hand-edited
 settings.json before running setup.
 """
+
 from __future__ import annotations
 
 import json
@@ -35,6 +36,7 @@ def _settings(target: Path) -> dict:
 # Canonical shape after fresh install
 # ---------------------------------------------------------------------------
 
+
 def test_fresh_install_writes_canonical_shape(tmp_path: Path) -> None:
     _run_setup(tmp_path)
     ask = _settings(tmp_path)["permissions"]["ask"]
@@ -56,12 +58,13 @@ def test_fresh_install_includes_all_twenty_rules(tmp_path: Path) -> None:
         "Bash(brew install *)",
         "Bash(apt install *)",
     ]:
-        assert required in ask, "missing canonical rule: {}".format(required)
+        assert required in ask, f"missing canonical rule: {required}"
 
 
 # ---------------------------------------------------------------------------
 # Pre-existing state edge cases
 # ---------------------------------------------------------------------------
+
 
 def test_existing_defaults_sentinel_not_duplicated(tmp_path: Path) -> None:
     """If $defaults is already in permissions.ask, do not duplicate it."""
@@ -76,11 +79,7 @@ def test_existing_defaults_sentinel_not_duplicated(tmp_path: Path) -> None:
 
 
 def test_existing_canonical_rule_not_duplicated(tmp_path: Path) -> None:
-    settings = {
-        "permissions": {
-            "ask": ["$defaults", "Bash(pip install *)", "Bash(custom *)"]
-        }
-    }
+    settings = {"permissions": {"ask": ["$defaults", "Bash(pip install *)", "Bash(custom *)"]}}
     (tmp_path / ".claude").mkdir(parents=True)
     (tmp_path / SETTINGS_REL).write_text(json.dumps(settings), encoding="utf-8")
 
@@ -112,6 +111,7 @@ def test_existing_unrelated_fields_preserved(tmp_path: Path) -> None:
 # CLAUDE.md Installation Policy section
 # ---------------------------------------------------------------------------
 
+
 def test_claude_md_install_policy_appended_when_absent(tmp_path: Path) -> None:
     """Pre-existing CLAUDE.md without the Installation Policy section
     gets the section appended."""
@@ -125,11 +125,7 @@ def test_claude_md_install_policy_appended_when_absent(tmp_path: Path) -> None:
 def test_claude_md_install_policy_not_duplicated(tmp_path: Path) -> None:
     """Pre-existing CLAUDE.md with the Installation Policy heading
     (case-insensitive) is NOT modified."""
-    original = (
-        "# Existing\n\n"
-        "## installation policy\n\n"
-        "User custom install rules.\n"
-    )
+    original = "# Existing\n\n## installation policy\n\nUser custom install rules.\n"
     (tmp_path / "CLAUDE.md").write_text(original, encoding="utf-8")
     _run_setup(tmp_path)
     text = (tmp_path / "CLAUDE.md").read_text(encoding="utf-8")
@@ -141,6 +137,7 @@ def test_claude_md_install_policy_not_duplicated(tmp_path: Path) -> None:
 # ---------------------------------------------------------------------------
 # Re-run after partial install
 # ---------------------------------------------------------------------------
+
 
 def test_rerun_completes_partial_install(tmp_path: Path) -> None:
     """If a previous install only got the hook in but not the rules

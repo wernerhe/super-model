@@ -10,6 +10,7 @@ Two patterns appear pervasively:
 The `super_root` fixture points at the repo root so the skill manifest
 tests can locate `skills/<name>/manifest.json`.
 """
+
 from __future__ import annotations
 
 import json

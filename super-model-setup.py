@@ -11,6 +11,7 @@ The script refuses to run if that parent resolves to a filesystem root.
 The 8 install modules run in order; each is idempotent so re-running
 produces no diffs when nothing has changed.
 """
+
 # Python version guard MUST use only Python 3.6-compatible syntax
 # (no f-strings, no walrus operator, no PEP 604 unions). The guard
 # itself must run cleanly under any Python 3 the user happens to have
@@ -20,14 +21,9 @@ import sys
 _MIN_PYTHON = (3, 11)
 if sys.version_info < _MIN_PYTHON:
     sys.stderr.write(
-        "ERROR: super-model-setup requires Python {}.{}+ (you have {}.{}.{}).\n".format(
-            _MIN_PYTHON[0], _MIN_PYTHON[1],
-            sys.version_info[0], sys.version_info[1], sys.version_info[2],
-        )
+        f"ERROR: super-model-setup requires Python {_MIN_PYTHON[0]}.{_MIN_PYTHON[1]}+ (you have {sys.version_info[0]}.{sys.version_info[1]}.{sys.version_info[2]}).\n"
     )
-    sys.stderr.write(
-        "Install a recent Python and re-run super-model-setup.\n"
-    )
+    sys.stderr.write("Install a recent Python and re-run super-model-setup.\n")
     sys.exit(1)
 
 # Imports below the guard. Annotations stay simple (plain types only,
@@ -38,7 +34,6 @@ import json
 import re
 import shutil
 from pathlib import Path
-
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -131,6 +126,7 @@ state what you want to install and why, and wait for confirmation.
 # Path-resolution helpers
 # ---------------------------------------------------------------------------
 
+
 def _resolve_target_project(argv, super_source):
     """Determine the install target. Either argv[1] (if given) or the
     parent of super_source. Always returns an absolute Path."""
@@ -149,15 +145,16 @@ def _refuse_drive_root(target):
     anchor = target.anchor.rstrip("\\/")
     if not target_str or target_str == anchor:
         raise SystemExit(
-            "ERROR: install target resolved to a filesystem root: {}\n"
+            f"ERROR: install target resolved to a filesystem root: {target}\n"
             "  Super-Model is installed per-project. Drop the Super-Model folder INSIDE\n"
-            "  a project directory (e.g., C:\\my-project\\Super-Model\\) and re-run.".format(target)
+            "  a project directory (e.g., C:\\my-project\\Super-Model\\) and re-run."
         )
 
 
 # ---------------------------------------------------------------------------
 # Per-module functions
 # ---------------------------------------------------------------------------
+
 
 def _init_claude_md(target, super_source):
     """Module 1: claude-md-init. Seed <target>/CLAUDE.md on first install."""
@@ -240,9 +237,7 @@ def _install_hooks(target, super_source):
     settings["hooks"].setdefault("SessionStart", [])
     if not isinstance(settings["hooks"]["SessionStart"], list):
         settings["hooks"]["SessionStart"] = []
-    hook_command = '"{}" session-start'.format(
-        (super_source / "hooks" / "run-hook.cmd").as_posix()
-    )
+    hook_command = '"{}" session-start'.format((super_source / "hooks" / "run-hook.cmd").as_posix())
     entry = {
         "matcher": "startup|clear|compact",
         "hooks": [{"type": "command", "command": hook_command, "async": False}],
@@ -278,7 +273,7 @@ def _install_permissions(target):
     _save_settings(target, settings)
     if added == 0:
         return "install-approval rules already present"
-    return "added {} install-approval rules to permissions.ask".format(added)
+    return f"added {added} install-approval rules to permissions.ask"
 
 
 def _install_slash_commands(target, super_source):
@@ -300,14 +295,14 @@ def _install_slash_commands(target, super_source):
     drift_count = 0
     written_count = 0
     for skill in USER_INVOKABLE_SKILLS:
-        source_shim = super_source / "commands" / "{}.md".format(skill)
+        source_shim = super_source / "commands" / f"{skill}.md"
         if not source_shim.exists():
             continue
         expected = source_shim.read_text(encoding="utf-8")
         for dest in (
-            claude_cmds / "{}.md".format(skill),
-            windsurf_workflows / "{}.md".format(skill),
-            cline_workflows / "{}.md".format(skill),
+            claude_cmds / f"{skill}.md",
+            windsurf_workflows / f"{skill}.md",
+            cline_workflows / f"{skill}.md",
         ):
             action = _write_shim_with_drift_check(dest, expected)
             if action == "wrote":
@@ -321,15 +316,16 @@ def _install_slash_commands(target, super_source):
     _write_shim_with_drift_check(cline_root / "super-model.md", rule_body)
 
     if drift_count:
-        return "wrote {} slash-command files; {} user-edited files preserved".format(
-            written_count, drift_count
+        return (
+            f"wrote {written_count} slash-command files; {drift_count} user-edited files preserved"
         )
-    return "wrote {} slash-command files across Claude / Windsurf / Cline".format(written_count)
+    return f"wrote {written_count} slash-command files across Claude / Windsurf / Cline"
 
 
 # ---------------------------------------------------------------------------
 # Shared helpers
 # ---------------------------------------------------------------------------
+
 
 def _load_or_init_settings(target):
     settings_path = target / ".claude" / "settings.json"
@@ -362,13 +358,13 @@ def _super_model_rule_body(super_source):
         "# Super-Model always-on rule",
         "",
         "This project uses Super-Model for AI-assisted development orchestration.",
-        "Super-Model source: `{}`".format(super_source.as_posix()),
+        f"Super-Model source: `{super_source.as_posix()}`",
         "",
         "## Available slash commands",
         "",
     ]
     for skill in USER_INVOKABLE_SKILLS:
-        lines.append("- `/{}`".format(skill))
+        lines.append(f"- `/{skill}`")
     lines.append("")
     lines.append("## Installation Policy")
     lines.append("")
@@ -413,6 +409,7 @@ def _detect_user_edits(existing_content, expected_content):
     ship updated descriptions). Body differences ARE user edits and
     must be preserved.
     """
+
     def _split_body(text):
         parts = text.split("---", 2)
         if len(parts) < 3:
@@ -446,6 +443,7 @@ def _write_shim_with_drift_check(dest, expected_content):
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main(argv=None):
     argv = argv if argv is not None else sys.argv
     super_source = Path(__file__).resolve().parent
@@ -453,8 +451,8 @@ def main(argv=None):
     _refuse_drive_root(target)
 
     print("super-model-setup:")
-    print("  source: {}".format(super_source))
-    print("  target: {}".format(target))
+    print(f"  source: {super_source}")
+    print(f"  target: {target}")
     print()
 
     print("[Project root]")

@@ -7,15 +7,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## Unreleased
 
+No changes yet.
+
+## [1.0.0-rc1] - 2026-05-19
+
+Release candidate. CI matrix green across 3 OSes / 2 Python versions; lint + format clean across the 27-file Python surface.
+
 ### Added
 
 - 2 agent definitions in `agents/` for `super-execute` subagent dispatch:
   - `code-implementer` (per-step implementation under SUBAGENT-STOP exemption; TDD-first; no scope creep).
   - `code-reviewer` (focused-scope review agent).
+- GitHub Actions matrix workflow at `.github/workflows/test.yml`:
+  - `lint (ruff)` stage on Ubuntu (ruff check + ruff format --check).
+  - `test` matrix stage over {Ubuntu, Windows, macOS} x {Python 3.11, 3.12} - 6 jobs.
+  - Concurrency: cancel-in-progress on the same ref.
+- `.pre-commit-config.yaml` (ruff lint + format + standard hygiene hooks; pytest hook on pre-push).
+- `pytest.ini` with strict marker handling (typo'd `@pytest.mark.X` becomes an error).
+- `ruff.toml` (line-length 100, target-version py311, lint rules E + W + F + I + B + UP + RUF; per-file ignores for the install script's Python 3.6 compat).
 
 ### Fixed
 
 - `code-reviewer` frontmatter description rewritten to be YAML-safe (upstream description had embedded `<example>Context:` colon-space sequences that broke `yaml.safe_load`).
+- Lint cleanups: 8 B007 (unused loop variables in skill manifest tests), 1 B017 (blind `Exception` in `pytest.raises`), 1 F841 (unused mtime snapshot in idempotency test).
 
 ## [0.4.0] - 2026-05-09
 
