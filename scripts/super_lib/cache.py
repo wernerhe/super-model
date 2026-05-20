@@ -34,17 +34,17 @@ JSON, missing hmac field, missing data field, HMAC mismatch) returns
 None. The caller falls back to re-running the underlying check. A
 single bad cache file cannot break downstream flows.
 """
+
 from __future__ import annotations
 
 import json
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from ._hmac import compute_hmac, verify_hmac
 from ._io import atomic_write_json
-
 
 _CACHE_KEY_RE = re.compile(r"^[a-zA-Z0-9_-]{1,128}$")
 
@@ -72,9 +72,7 @@ def _sanitize_path_component(value: Any, label: str) -> str:
     Failures raise ValueError BEFORE any filesystem operation.
     """
     if not isinstance(value, str):
-        raise ValueError(
-            f"Cache {label} must be a string, got {type(value).__name__}"
-        )
+        raise ValueError(f"Cache {label} must be a string, got {type(value).__name__}")
     if not _CACHE_KEY_RE.fullmatch(value):
         raise ValueError(
             f"Cache {label} {value!r} contains characters outside the allowed "
@@ -82,8 +80,7 @@ def _sanitize_path_component(value: Any, label: str) -> str:
         )
     if value.upper() in _WINDOWS_RESERVED:
         raise ValueError(
-            f"Cache {label} {value!r} matches a Windows reserved device name; "
-            f"choose another."
+            f"Cache {label} {value!r} matches a Windows reserved device name; choose another."
         )
     return value
 
@@ -97,12 +94,10 @@ def _marker_path(project_root: Path, purpose: str, key: str) -> Path:
 
 def _utc_now_iso() -> str:
     """UTC ISO-8601 timestamp with Z suffix instead of +00:00."""
-    return datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
+    return datetime.now(UTC).isoformat().replace("+00:00", "Z")
 
 
-def read_marker(
-    project_root: Path, purpose: str, key: str
-) -> dict[str, Any] | None:
+def read_marker(project_root: Path, purpose: str, key: str) -> dict[str, Any] | None:
     """Read a cache marker, verifying its HMAC integrity.
 
     On success: returns the full marker dict (including the hmac field).
@@ -172,9 +167,7 @@ def write_marker(
     lock-serialized, fsync'd, and POSIX-0600 before rename.
     """
     if not isinstance(data, dict):
-        raise ValueError(
-            f"Cache marker data must be a dict, got {type(data).__name__}"
-        )
+        raise ValueError(f"Cache marker data must be a dict, got {type(data).__name__}")
     path = _marker_path(project_root, purpose, key)
     payload: dict[str, Any] = {
         "purpose": purpose,
@@ -185,8 +178,6 @@ def write_marker(
     }
     if ttl_seconds is not None:
         if not isinstance(ttl_seconds, int) or ttl_seconds < 0:
-            raise ValueError(
-                f"ttl_seconds must be a non-negative int, got {ttl_seconds!r}"
-            )
+            raise ValueError(f"ttl_seconds must be a non-negative int, got {ttl_seconds!r}")
         payload["ttl_seconds"] = ttl_seconds
     atomic_write_json(path, payload)

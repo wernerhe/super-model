@@ -1,4 +1,5 @@
 """super-visual-debug: manifest <-> module files <-> presets consistency."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -27,7 +28,7 @@ def test_preset_modules_exist_in_manifest(super_root: Path) -> None:
     skill_dir = super_root / "skills" / SKILL
     manifest = read_manifest(skill_dir)
     declared = {entry["name"] for entry in manifest["modules"]}
-    for preset_name, preset in (manifest.get("presets") or {}).items():
+    for _preset_name, preset in (manifest.get("presets") or {}).items():
         for module_name in preset.get("modules_enabled", []):
             assert module_name in declared
 

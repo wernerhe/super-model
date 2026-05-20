@@ -19,6 +19,7 @@ hand-edited file is rejected at the resolve point with the file path
 embedded in the error, instead of slipping through and failing later
 with an opaque field-access error.
 """
+
 from __future__ import annotations
 
 import json
@@ -29,7 +30,6 @@ from typing import Any
 import jsonschema
 
 from ._io import atomic_write_json
-
 
 _GLOBAL_CONFIG_DIR = ".super-model"
 _GLOBAL_CONFIG_FILENAME = "config.json"
@@ -44,17 +44,13 @@ def _global_config_path() -> Path:
     """Resolve ~/.super-model/config.json, honoring HOME then USERPROFILE."""
     home = os.environ.get("HOME") or os.environ.get("USERPROFILE")
     if not home:
-        raise RuntimeError(
-            "Cannot locate HOME / USERPROFILE for global Super-Model config."
-        )
+        raise RuntimeError("Cannot locate HOME / USERPROFILE for global Super-Model config.")
     return Path(home) / _GLOBAL_CONFIG_DIR / _GLOBAL_CONFIG_FILENAME
 
 
 def _load_json_schema(path: Path) -> dict[str, Any]:
     if not path.exists():
-        raise FileNotFoundError(
-            f"Schema not found at {path}; reinstall Super-Model?"
-        )
+        raise FileNotFoundError(f"Schema not found at {path}; reinstall Super-Model?")
     try:
         return json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as e:
@@ -76,9 +72,7 @@ def _load_json_or_empty(path: Path) -> dict[str, Any]:
     except json.JSONDecodeError as e:
         raise ValueError(f"Config at {path} is malformed JSON: {e}") from e
     if not isinstance(parsed, dict):
-        raise ValueError(
-            f"Config at {path} must be a JSON object, got {type(parsed).__name__}"
-        )
+        raise ValueError(f"Config at {path} must be a JSON object, got {type(parsed).__name__}")
     return parsed
 
 
@@ -109,11 +103,7 @@ def _deep_merge(base: dict[str, Any], overlay: dict[str, Any]) -> dict[str, Any]
     """
     result = dict(base)
     for key, overlay_value in overlay.items():
-        if (
-            key in result
-            and isinstance(result[key], dict)
-            and isinstance(overlay_value, dict)
-        ):
+        if key in result and isinstance(result[key], dict) and isinstance(overlay_value, dict):
             result[key] = _deep_merge(result[key], overlay_value)
         else:
             result[key] = overlay_value

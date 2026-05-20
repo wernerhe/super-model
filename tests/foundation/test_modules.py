@@ -4,6 +4,7 @@ Covers `read_manifest`, `list_modules`, and `parse_frontmatter` with the
 expected error paths (missing files, malformed JSON, missing required
 schema fields, scalar/list frontmatter rejection per MED-005).
 """
+
 from __future__ import annotations
 
 import json
@@ -21,7 +22,7 @@ def _make_skill(tmp_path: Path, manifest: dict, modules: dict[str, str]) -> Path
     if modules:
         (skill / "modules").mkdir()
         for name, body in modules.items():
-            (skill / "modules" / "{}.md".format(name)).write_text(body, encoding="utf-8")
+            (skill / "modules" / f"{name}.md").write_text(body, encoding="utf-8")
     return skill
 
 

@@ -1,0 +1,56 @@
+# ruff configuration for Super-Model.
+#
+# We use ruff for both linting (E, W, F, I, B, UP) and formatting.
+
+line-length = 100
+target-version = "py311"
+
+extend-exclude = [
+    ".venv",
+    "venv",
+    ".worktrees",
+    ".super/cache",
+    "build",
+    "dist",
+]
+
+[lint]
+# Selected rule sets, kept narrow on purpose:
+# E, W : pycodestyle
+# F    : pyflakes
+# I    : isort (import ordering)
+# B    : flake8-bugbear (likely bugs / surprises)
+# UP   : pyupgrade (modern syntax where possible)
+# RUF  : ruff-specific rules
+select = ["E", "W", "F", "I", "B", "UP", "RUF"]
+
+# super-mode-setup.py must parse on Python 3.6 for the version guard to
+# fire properly. UP rules would push it to PEP 585 / 604 syntax, which
+# would break parse on 3.6. The file uses plain types intentionally.
+ignore = []
+
+[lint.per-file-ignores]
+# Install script:
+# - UP rules would push to PEP 585 / 604 syntax, which breaks Python 3.6
+#   parse - the version guard at the top would never get to run.
+# - E402 (module imports below code) is intentional: imports MUST come
+#   after the 3.6-compatible version guard.
+# - E501 (line too long): long string constants (CLAUDE_MD_TEMPLATE,
+#   docstrings, error messages); breaking them up hurts readability.
+"super-mode-setup.py" = ["UP006", "UP007", "UP035", "UP045", "E402", "E501"]
+
+# Tests can have unused imports for fixture-style patterns.
+"tests/**/*.py" = ["F401", "F811"]
+
+# Cache sanitization tests intentionally include Unicode look-alikes
+# (e.g., Cyrillic 'а' that looks like Latin 'a') to verify the allowlist
+# rejects them - RUF002 would flag the test docstrings themselves.
+"tests/foundation/test_cache_sanitization.py" = ["RUF002"]
+
+[lint.isort]
+known-first-party = ["scripts", "super_lib"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"

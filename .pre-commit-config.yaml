@@ -1,0 +1,38 @@
+# Pre-commit hooks for Super-Model.
+#
+# Install: pip install pre-commit; pre-commit install
+# Run all: pre-commit run --all-files
+# Bypass once (use sparingly): git commit --no-verify
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.6.9
+    hooks:
+      # Linter
+      - id: ruff
+        args: [--fix, --exit-non-zero-on-fix]
+      # Formatter
+      - id: ruff-format
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.6.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: [--maxkb=512]
+
+  - repo: local
+    hooks:
+      # Run the foundation test suite locally before allowing the commit.
+      # Skipped on CI (which runs pytest separately as its own stage).
+      - id: pytest-foundation
+        name: pytest tests/foundation/
+        entry: python -m pytest tests/foundation/ -q
+        language: system
+        pass_filenames: false
+        stages: [pre-push]

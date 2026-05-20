@@ -14,6 +14,7 @@ Cross-user threat (shared CI / dev environments): User A's CI-generated
 marker cannot be replayed in User B's checkout because they have
 different per-user secrets.
 """
+
 from __future__ import annotations
 
 import hashlib

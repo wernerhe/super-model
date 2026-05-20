@@ -1,4 +1,5 @@
 """Shared I/O helpers for Super-Model scripts."""
+
 from __future__ import annotations
 
 import json

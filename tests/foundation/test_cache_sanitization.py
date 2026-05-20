@@ -5,6 +5,7 @@ go through `_sanitize_path_component`, which enforces a strict allowlist
 to prevent path traversal, NTFS Alternate Data Streams, Windows reserved
 device names, and Unicode look-alike confusables.
 """
+
 from __future__ import annotations
 
 import pytest
@@ -43,7 +44,9 @@ def test_rejects_path_separators() -> None:
         _sanitize_path_component("a\\b", "key")
 
 
-@pytest.mark.parametrize("reserved", ["CON", "con", "COM1", "Com1", "LPT9", "lpt9", "PRN", "NUL", "AUX"])
+@pytest.mark.parametrize(
+    "reserved", ["CON", "con", "COM1", "Com1", "LPT9", "lpt9", "PRN", "NUL", "AUX"]
+)
 def test_rejects_windows_reserved_device_names(reserved: str) -> None:
     with pytest.raises(ValueError):
         _sanitize_path_component(reserved, "key")
@@ -60,7 +63,7 @@ def test_rejects_unicode_lookalike() -> None:
     character. The allowlist must be ASCII-only to prevent confusables."""
     cyrillic_a = "\u0430"  # looks like 'a'
     with pytest.raises(ValueError):
-        _sanitize_path_component("co{}de-review".format(cyrillic_a), "purpose")
+        _sanitize_path_component(f"co{cyrillic_a}de-review", "purpose")
 
 
 def test_rejects_dotfile() -> None:
