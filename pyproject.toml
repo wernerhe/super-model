@@ -36,8 +36,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/hwerner2014/super-model"
-Repository = "https://github.com/hwerner2014/super-model"
+Homepage = "https://github.com/wernerhe/super-model"
+Repository = "https://github.com/wernerhe/super-model"
 
 [tool.setuptools.packages.find]
 where = ["."]

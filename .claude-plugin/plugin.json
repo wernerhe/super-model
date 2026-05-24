@@ -1,13 +1,13 @@
 {
   "name": "super-model",
   "description": "Per-project agentic skills library for Claude Code, Cursor, Windsurf, and other AI coding IDEs. Forked from obra/superpowers; rebuilt around a per-project install model.",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "author": {
     "name": "Harry Werner",
     "email": "hwerner2014@gmail.com"
   },
-  "homepage": "https://github.com/hwerner2014/super-model",
-  "repository": "https://github.com/hwerner2014/super-model",
+  "homepage": "https://github.com/wernerhe/super-model",
+  "repository": "https://github.com/wernerhe/super-model",
   "license": "MIT",
   "keywords": ["skills", "agentic", "tdd", "debugging", "claude-code", "cursor", "windsurf", "per-project", "workflows"]
 }
