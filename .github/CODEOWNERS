@@ -1,0 +1,24 @@
+# Code owners for Super-Model.
+#
+# GitHub uses this file to auto-request reviews on PRs touching the
+# matched paths. Solo project right now -> everything routes to the
+# sole maintainer. Expand as the contributor base grows.
+
+# Catch-all: default reviewer for everything.
+*                       @wernerhe
+
+# Foundation surfaces that need extra eyes on changes:
+/scripts/super_lib/     @wernerhe
+/super-model-setup.py    @wernerhe
+/hooks/                 @wernerhe
+/schemas/               @wernerhe
+
+# Skills - safer to change in isolation but still want a heads-up.
+/skills/                @wernerhe
+
+# Tests must stay green; changes here often signal a contract shift.
+/tests/                 @wernerhe
+
+# CI / governance.
+/.github/               @wernerhe
+/SECURITY.md            @wernerhe

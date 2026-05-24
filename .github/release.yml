@@ -1,0 +1,44 @@
+# Automatic release-notes categorization.
+#
+# When a future release is drafted via GitHub's "Generate release notes"
+# button, merged PRs since the previous tag are grouped by these
+# categories based on their labels.
+#
+# Apply the labels manually to PRs (or via labeler workflows) and the
+# next release will be categorized for free.
+
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+      - duplicate
+      - invalid
+    authors:
+      - dependabot
+  categories:
+    - title: New skills + features
+      labels:
+        - feature
+        - skill
+        - enhancement
+    - title: Bug fixes
+      labels:
+        - bug
+        - fix
+    - title: Security
+      labels:
+        - security
+    - title: Documentation
+      labels:
+        - documentation
+        - docs
+    - title: Tests + CI
+      labels:
+        - tests
+        - ci
+    - title: Dependencies
+      labels:
+        - dependencies
+    - title: Other
+      labels:
+        - "*"

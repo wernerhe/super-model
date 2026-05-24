@@ -1,0 +1,51 @@
+# Dependabot version updates.
+#
+# Security updates are configured separately in repository Settings ->
+# Code security and analysis ("Dependabot security updates"). This file
+# adds version-update PRs for non-security bumps.
+#
+# Schedule kept conservative (weekly) so the PR volume stays manageable
+# on a solo project.
+
+version: 2
+updates:
+  # Python dependencies declared in pyproject.toml + requirements-dev.txt.
+  - package-ecosystem: pip
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - python
+    commit-message:
+      prefix: deps
+      include: scope
+    groups:
+      # Bundle minor + patch bumps into one PR per ecosystem; treat
+      # majors as their own PRs (more likely to need review).
+      dev-deps:
+        patterns:
+          - "*"
+        update-types:
+          - minor
+          - patch
+
+  # GitHub Actions versions referenced in .github/workflows/*.yml.
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+      day: monday
+      time: "09:00"
+      timezone: "America/New_York"
+    open-pull-requests-limit: 5
+    labels:
+      - dependencies
+      - github-actions
+    commit-message:
+      prefix: ci
+      include: scope
