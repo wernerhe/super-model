@@ -9,6 +9,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 No changes yet.
 
+## [2.0.0] - 2026-05-23
+
+First stable Super-Model release. Promotes `1.0.0-rc1` to a major version.
+
+The major version number (v2) reflects this being a second-generation tool in the agentic-skills space - the v1 lineage is `obra/superpowers`, the upstream this is forked from. Architectural divergence from the upstream (per-project distribution model, hard-gated brainstorm, HMAC-signed cache markers, hook-point composition) makes the major bump appropriate.
+
+### Changed
+
+- `.claude-plugin/plugin.json` and `pyproject.toml` versions bumped `1.0.0-rc1` -> `2.0.0`.
+- Distribution model declared stable (per-project, `<project>/Super-Model/`; no user-level state).
+
+### Notable since the fork point (recap)
+
+- 8 top-level `super-*` skills + 7 helper / always-on skills (15 total).
+- 57 modules across the top-level skills.
+- 3 hard-gated artifact flow in `super-brainstorm` (verbal design -> committed design doc -> committed spec).
+- HMAC-signed cache markers consumed by `super-prepare-branch`.
+- Hook-point composition in `super-execute` (3 backends x 3 policies, chain-fired from `super-brainstorm` only).
+- Per-project install via `super-model-setup.py` (no user-level state).
+- Polyglot SessionStart hook (same file on Windows + Unix).
+- 17-file foundation test suite (104 assertions).
+- 5 architecture deep dives.
+- CI matrix on 3 OSes / 2 Python versions.
+
+For the full path from v0.1.0 to v2.0.0, see the prior entries below.
+
 ## [1.0.0-rc1] - 2026-05-19
 
 Release candidate. CI matrix green across 3 OSes / 2 Python versions; lint + format clean across the 27-file Python surface.

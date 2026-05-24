@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "super-model"
-version = "1.0.0-rc1"
+version = "2.0.0"
 description = "Per-project agentic skills library for AI coding IDEs"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -36,8 +36,8 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/hwerner2014/super-model"
-Repository = "https://github.com/hwerner2014/super-model"
+Homepage = "https://github.com/wernerhe/super-model"
+Repository = "https://github.com/wernerhe/super-model"
 
 [tool.setuptools.packages.find]
 where = ["."]
