@@ -80,7 +80,9 @@ This project uses **Super-Model** for AI-assisted development orchestration. Sup
 
 - Per-project config: `.super/config.json` (created by `super-model-setup`)
 
-Super-Model is per-project: there is no user-level / "global" config.
+Super-Model resolves config through a 2-layer cascade: an optional user-level
+`~/.super-model/config.json` (personal defaults) overlaid by the per-project
+`.super/config.json` (the canonical, reproducible layer that wins on conflicts).
 See `{super_model_root}/docs/architecture/config-cascade.md` for the
 resolution model.
 
