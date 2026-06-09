@@ -30,6 +30,22 @@ from typing import Any
 import jsonschema
 
 from ._io import atomic_write_json
+from .deployment import detect_deployment
+
+# Layer-1 baked defaults for the Claude-deployment policy (design §8, §9). These
+# apply only when the active deployment is Claude Code and are overridable by
+# project/global config. "max"/"ultracode" are session-only and intentionally
+# absent here (they cannot be pinned).
+_DEPLOYMENT_DEFAULTS: dict[str, dict[str, dict[str, Any]]] = {
+    "claude-code": {
+        "super-brainstorm": {"model": "opus", "effort": "xhigh"},
+        "super-execute": {
+            "backend": "parallel-dispatch",
+            "implementer_model": "opus",
+            "effort": "xhigh",
+        },
+    },
+}
 
 _GLOBAL_CONFIG_DIR = ".super-model"
 _GLOBAL_CONFIG_FILENAME = "config.json"
@@ -135,6 +151,32 @@ def resolve(skill_name: str, *, project_root: Path | None = None) -> dict[str, A
     if not isinstance(project_skill_section, dict):
         project_skill_section = {}
     return _deep_merge(global_skill_section, project_skill_section)
+
+
+def deployment_preferences(
+    skill_name: str,
+    *,
+    project_root: Path | None = None,
+    env: dict[str, str] | None = None,
+) -> dict[str, Any]:
+    """Resolve the active deployment's preferences for a skill.
+
+    Returns the Layer-1 baked Claude defaults (for ``super-brainstorm`` /
+    ``super-execute`` on a Claude Code deployment) deep-merged with any
+    ``deployment_preferences.<deployment>`` overrides from the config cascade.
+    Returns ``{}`` for a non-Claude deployment with no configured overrides, so
+    the Claude-only policy never leaks to Cursor/Windsurf.
+    """
+    deployment = detect_deployment(env)
+    baked = _DEPLOYMENT_DEFAULTS.get(deployment, {}).get(skill_name, {})
+    section = resolve(skill_name, project_root=project_root)
+    configured = section.get("deployment_preferences", {})
+    if not isinstance(configured, dict):
+        configured = {}
+    overlay = configured.get(deployment, {})
+    if not isinstance(overlay, dict):
+        overlay = {}
+    return _deep_merge(baked, overlay)
 
 
 def validate(config_dict: dict[str, Any]) -> None:

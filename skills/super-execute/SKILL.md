@@ -37,6 +37,32 @@ This lets a user enable TDD-enforcement without caring which backend executes th
 
 Default backend: `backend-inline-batch`. Configurable via `super_execute.backend` in `.super/config.json`.
 
+### Deployment-specific behavior (Claude Code only)
+
+On a **Claude Code** deployment (`super_lib.deployment.is_claude_code`), read the
+Claude preferences via `super_lib.config.deployment_preferences("super-execute")`
+(Layer-1 defaults `backend: parallel-dispatch`, `implementer_model: opus`,
+`effort: xhigh`, overridable per project) and apply them as follows:
+
+- **Backend.** Prefer the configured backend (default `parallel-dispatch`) over
+  `backend-inline-batch` **above a small-plan threshold** — when the plan has more
+  than ~3 steps with declared `dependencies`, or Ultracode is active. Keep small
+  plans on the inline backend so the heavier fan-out does not waste tokens on work
+  that does not benefit from it.
+- **Implementer model.** Dispatch the `code-implementer` (and `code-reviewer`)
+  subagent with `implementer_model` (default `opus`) instead of the agent's
+  hardcoded `model: sonnet`, so implementation runs at the chosen tier on Claude.
+- **Ultracode.** Ultracode is a session-only mode and **cannot** be pinned in
+  settings or frontmatter. If it is off when execution begins, surface **one
+  advisory line** recommending `/effort ultracode` for dynamic multi-agent
+  orchestration, then proceed regardless of the answer.
+
+On any non-Claude deployment, `deployment_preferences(...)` returns `{}` and none
+of the above applies — the default inline backend and the agents' own `model`
+frontmatter stand. This honesty matches the policy: the settings seed is
+configured, the backend/model defaults are LLM-followed, and the Ultracode prompt
+is advisory only.
+
 ## Policies (zero or more enabled)
 
 1. `policy-tdd-enforcement` - rejects step completion unless tests were written FIRST and a RED -> GREEN transition is recorded.

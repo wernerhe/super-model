@@ -33,7 +33,27 @@
             "$ref": "#/$defs/moduleSettings"
           },
           "description": "For super-execute: per-policy-module overrides keyed by policy name."
+        },
+        "deployment_preferences": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Per-deployment overrides (model/effort/backend) for this skill, keyed by deployment.",
+          "properties": {
+            "claude-code": {"$ref": "#/$defs/deploymentPrefs"},
+            "cursor": {"$ref": "#/$defs/deploymentPrefs"},
+            "windsurf": {"$ref": "#/$defs/deploymentPrefs"}
+          }
         }
+      }
+    },
+    "deploymentPrefs": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "model": {"type": "string"},
+        "effort": {"type": "string"},
+        "backend": {"type": "string"},
+        "implementer_model": {"type": "string"}
       }
     },
     "moduleSettings": {
