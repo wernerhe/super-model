@@ -53,6 +53,15 @@ GITIGNORE_ENTRIES = (".super/cache/", ".worktrees/")
 
 _MAX_DESCRIPTION_LEN = 256
 
+# Claude-deployment defaults seeded into .claude/settings.json (absent-only).
+# Verified Claude Code keys (code.claude.com/docs model-config): the "model"
+# alias "opus" tracks the current Opus release; "effortLevel" "xhigh" is the
+# highest PERSISTENT reasoning effort ("max"/"ultracode" are session-only and
+# cannot be pinned in settings). These keys live in Claude's own config file, so
+# they are seeded as part of Claude Code setup regardless of which IDE runs it.
+CLAUDE_MODEL_DEFAULT = "opus"
+CLAUDE_EFFORT_DEFAULT = "xhigh"
+
 CLAUDE_MD_TEMPLATE = """# Project guidance for Claude
 
 This project uses **Super-Model** for AI-assisted development orchestration. Super-Model source lives at `{super_model_root}`.
@@ -276,6 +285,29 @@ def _install_permissions(target):
     return f"added {added} install-approval rules to permissions.ask"
 
 
+def _install_claude_model_effort(target):
+    """Seed Claude model + effort defaults into .claude/settings.json (absent-only).
+
+    A key already present (an architect's own model / effortLevel) is preserved;
+    only a missing key is seeded. This is the persistent half of the Claude
+    deployment policy: a Claude session in this project starts on current Opus at
+    the highest persistent reasoning effort. The session-only pieces (Ultracode,
+    'max' effort) cannot be pinned and are surfaced by the skills at run time.
+    """
+    settings = _load_or_init_settings(target)
+    added = []
+    if "model" not in settings:
+        settings["model"] = CLAUDE_MODEL_DEFAULT
+        added.append("model")
+    if "effortLevel" not in settings:
+        settings["effortLevel"] = CLAUDE_EFFORT_DEFAULT
+        added.append("effortLevel")
+    if not added:
+        return "Claude model/effort already set; preserved"
+    _save_settings(target, settings)
+    return "seeded Claude defaults ({})".format(", ".join(added))
+
+
 def _install_slash_commands(target, super_source):
     """Module 8: slash-commands-install. Write 7 super-* shim files to all 3 IDEs."""
     # Claude Code
@@ -466,6 +498,7 @@ def main(argv=None):
     print("[Claude Code]")
     print("  " + _install_hooks(target, super_source))
     print("  " + _install_permissions(target))
+    print("  " + _install_claude_model_effort(target))
 
     print()
     print("[Slash commands]")
